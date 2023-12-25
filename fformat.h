@@ -1,20 +1,44 @@
-/* 
- * Header-only-library for simple definition of custom file formats.
- *
- * See example.c on how it is intended to be used.
- *
- * Config:
- * #define FFORMAT_IMPL // to access function definitions
- *
- * Most functions return a bool that is true on success
- * or false if the data could not be written to/read from the file.
- *
- * Pitfalls:
- * - be aware, that any change to a file format will prevent users from
- *   successfully loading files that were saved with the old format.
- *   Consider using version identifiers within the file format and supporting
- *   the loading of legacy files.
- */
+/*
+MIT License
+
+Copyright (c) 2023 Lieven Petersen
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+* Header-only-library for simple definition of custom file formats.
+*
+* See example.c on how it is intended to be used.
+*
+* Config:
+* #define FFORMAT_IMPL  // to access function definitions
+*
+* Most functions return a bool that is true on success
+* or false if the data could not be written to/read from the file.
+*
+* Pitfalls:
+* - be aware, that any change to a file format will prevent users from
+*   successfully loading files that were saved with the old format.
+*   Consider using version identifiers within the file format and supporting
+*   the loading of legacy files.
+* - consider if any standard file formats may already suit your needs.
+*/
 
 
 #ifndef __FFORMAT_H
