@@ -4,7 +4,7 @@
  * See example.c on how it is intended to be used.
  *
  * Config:
- * #define FILESPEC_IMPL // to access function definitions
+ * #define FFORMAT_IMPL // to access function definitions
  *
  * Most functions return a bool that is true on success
  * or false if the data could not be written to/read from the file.
@@ -17,8 +17,8 @@
  */
 
 
-#ifndef __FILESPEC_H
-#define __FILESPEC_H
+#ifndef __FFORMAT_H
+#define __FFORMAT_H
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -37,10 +37,10 @@ static bool str_literal(FILE *file, ACTION_ENUM direction, char *str);
 // pointer to a memory location of n_bytes size. Data is written/read as raw bytes.
 static bool var_content(FILE *file, ACTION_ENUM direction, void *var, size_t n_bytes);
 
-#endif // __FILESPEC_H
+#endif // __FFORMAT_H
 
 // unlock definitons
-#ifdef FILESPEC_IMPL
+#ifdef FFORMAT_IMPL
 
 // open a file in the mode indicated by direction (needs to be closed manually)
 static FILE *with_file(char *path, ACTION_ENUM direction){
@@ -81,4 +81,4 @@ static bool var_content(FILE *file, ACTION_ENUM direction, void *var, size_t n_b
     return false;
 }
 
-#endif // FILESPEC_IMPL
+#endif // FFORMAT_IMPL

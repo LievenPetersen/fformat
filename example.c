@@ -2,8 +2,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#define FILESPEC_IMPL
-#include "filespec.h"
+#define FFORMAT_IMPL
+#include "fformat.h"
 
 
 typedef struct{
