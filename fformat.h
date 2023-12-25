@@ -33,11 +33,12 @@ SOFTWARE.
 * or false if the data could not be written to/read from the file.
 *
 * Pitfalls:
+* - consider if any standard file formats may already suit your needs.
+* - use stdint.h if you want portability between systems.
 * - be aware, that any change to a file format will prevent users from
 *   successfully loading files that were saved with the old format.
 *   Consider using version identifiers within the file format and supporting
 *   the loading of legacy files.
-* - consider if any standard file formats may already suit your needs.
 */
 
 

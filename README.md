@@ -8,11 +8,11 @@ To achieve this, all provided functions receive a mode (load or save) that chang
 #define FFORMAT_IMPL
 #include "fformat.h"
 
-bool friendly_file_io(FF_MODE mode, int *number, char *path){
+bool friendly_file_io(FF_MODE mode, int32_t *number, char *path){
 
     FILE *file = ff_with_file(path, mode);
 
-    // Definiton of file format. (This layout supports easy copy pasting of lines)
+    // Definition of file format. (This layout supports easy copy pasting of lines)
     bool success = true
     && ff_str_literal(file, mode, "Hello, I am a friendly file!\n") // write or assert strings
     && ff_str_literal(file, mode, "can we be friends?? <.<\n")

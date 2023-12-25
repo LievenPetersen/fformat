@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdint.h>
 
 #define FFORMAT_IMPL
 #include "fformat.h"
@@ -9,7 +10,7 @@
 // Function that defines a file format.
 // It can both load and save the the file format, depending on the given mode.
 // This is not limited to a single struct or static file sizes, you can do whatever you like.
-bool friendly_file_io(FF_MODE mode, int *number, char *path){
+bool friendly_file_io(FF_MODE mode, int32_t *number, char *path){
 
     FILE *file = ff_open(path, mode);
 
@@ -28,11 +29,11 @@ bool friendly_file_io(FF_MODE mode, int *number, char *path){
 }
 
 int main(){
-    int incoming_data = 12345678;
+    int32_t incoming_data = 12345678;
     bool save_success = friendly_file_io(MODE_SAVE, &incoming_data, "test.friendly");
     assert(save_success);
 
-    int loaded_data = 0;
+    int32_t loaded_data = 0;
     bool load_success = friendly_file_io(MODE_LOAD, &loaded_data, "test.friendly");
     assert(load_success);
 
