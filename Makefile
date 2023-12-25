@@ -1,16 +1,15 @@
 
-libs =
 flags = -Werror -Wall -pedantic -ggdb
 srcs = $(wildcard *.c)
 output = main
 
-all: run
+all: test
 
-run: build
+test: build
 	./$(output)
 
 build: $(srcs)
-	gcc -o $(output) $(srcs) $(flags) $(libs)
+	gcc --std=c99 -o $(output) $(srcs) $(flags)
 
 clean:
 	rm $(output)
