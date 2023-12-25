@@ -49,43 +49,43 @@ SOFTWARE.
 #include <string.h>
 
 typedef enum{
-    ACTION_LOAD,
-    ACTION_SAVE,
-}ACTION_ENUM;
+    MODE_LOAD,
+    MODE_SAVE,
+}FF_MODE;
 
-// open a file in the mode indicated by direction (needs to be closed manually)
-static FILE *with_file(char *path, ACTION_ENUM direction);
+// open a file in the indicated mode (needs to be closed manually)
+static FILE *ff_open(char *path, FF_MODE mode);
 // define the next section to contain the given string. str needs to be NULL terminated.
 // NULL terminator will not be written to file.
-static bool str_literal(FILE *file, ACTION_ENUM direction, char *str);
+static bool ff_str_literal(FILE *file, FF_MODE mode, char *str);
 // pointer to a memory location of n_bytes size. Data is written/read as raw bytes.
-static bool var_content(FILE *file, ACTION_ENUM direction, void *var, size_t n_bytes);
+static bool ff_var_content(FILE *file, FF_MODE mode, void *var, size_t n_bytes);
 
 #endif // __FFORMAT_H
 
 // unlock definitons
 #ifdef FFORMAT_IMPL
 
-// open a file in the mode indicated by direction (needs to be closed manually)
-static FILE *with_file(char *path, ACTION_ENUM direction){
-    switch(direction){
-        case ACTION_LOAD: return fopen(path, "rb");
-        case ACTION_SAVE: return fopen(path, "wb");
+// open a file in the indicated mode (needs to be closed manually)
+static FILE *ff_open(char *path, FF_MODE mode){
+    switch(mode){
+        case MODE_LOAD: return fopen(path, "rb");
+        case MODE_SAVE: return fopen(path, "wb");
     }
     return NULL;
 }
 
 // define the next section to contain the given string. str needs to be NULL terminated.
 // NULL terminator will not be written to file.
-static bool str_literal(FILE *file, ACTION_ENUM direction, char *str){
+static bool ff_str_literal(FILE *file, FF_MODE mode, char *str){
     size_t str_len = strlen(str);
-    switch (direction) {
-        case ACTION_LOAD: {
+    switch (mode) {
+        case MODE_LOAD: {
             char buf[str_len];
             return fread(buf, 1, str_len, file) == str_len 
                 && strncmp(str, buf, str_len) == 0;
         }break;
-        case ACTION_SAVE: {
+        case MODE_SAVE: {
             return fwrite(str, 1, str_len, file) == str_len;
         }break;
     }
@@ -93,12 +93,12 @@ static bool str_literal(FILE *file, ACTION_ENUM direction, char *str){
 }
 
 // pointer to a memory location of n_bytes size. Data is written/read as raw bytes.
-static bool var_content(FILE *file, ACTION_ENUM direction, void *var, size_t n_bytes){
-    switch (direction) {
-        case ACTION_LOAD: {
+static bool ff_var_content(FILE *file, FF_MODE mode, void *var, size_t n_bytes){
+    switch (mode) {
+        case MODE_LOAD: {
             return fread(var, 1, n_bytes, file) == n_bytes;
         }break;
-        case ACTION_SAVE: {
+        case MODE_SAVE: {
             return fwrite(var, 1, n_bytes, file) == n_bytes;
         }break;
     }
