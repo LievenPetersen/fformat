@@ -61,6 +61,9 @@ static bool ff_str_literal(FILE *file, FF_MODE mode, char *str);
 // pointer to a memory location of n_bytes size. Data is written/read as raw bytes.
 static bool ff_var_content(FILE *file, FF_MODE mode, void *var, size_t n_bytes);
 
+// similar to ff_var_content, except allocates when in MODE_LOAD, thus requiring extra level of '&'.
+static bool ff_array_alloc(FILE *file, FF_MODE mode, void **var, size_t n_bytes);
+
 #endif // __FFORMAT_H
 
 // unlock definitons
@@ -118,6 +121,17 @@ static bool ff_var_content(FILE *file, FF_MODE mode, void *var, size_t n_bytes){
         }break;
     }
     return false;
+}
+
+// similar to ff_var_content, except allocates when in MODE_LOAD, thus requiring extra level of '&'.
+static bool ff_array_alloc(FILE *file, FF_MODE mode, void **var, size_t n_bytes){
+    if (mode == FF_MODE_LOAD){
+        *var = FF_MALLOC(n_bytes);
+        if (*var == NULL){
+            return false;
+        }
+    }
+    return ff_var_content(file, mode, *var, n_bytes);
 }
 
 #endif // FFORMAT_IMPL
