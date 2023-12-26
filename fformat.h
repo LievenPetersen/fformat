@@ -25,8 +25,14 @@
  *
  * See example.c on how it is intended to be used.
  *
- * Config:
- * #define FFORMAT_IMPL  // to access function definitions
+ * CONFIG:
+ *   #define FFORMAT_IMPL  // to access function definitions
+ *
+ *   Allocators can be overwritten by defining the following before the #include fformat.h:
+ *   #define FF_MALLOC <your malloc>
+ *   #define FF_FREE <your free>
+ *   - if one is defined, both need to be defined
+ *   - functions that allocate have "alloc" in their name
  *
  * Most functions return a bool that is true on success
  * or false if the data could not be written to/read from the file.
@@ -39,7 +45,6 @@
  *   Consider using version identifiers within the file format and supporting
  *   the loading of legacy files.
  */
-
 
 #ifndef __FFORMAT_H
 #define __FFORMAT_H
@@ -124,14 +129,14 @@ static bool ff_var_content(FILE *file, FF_MODE mode, void *var, size_t n_bytes){
 }
 
 // similar to ff_var_content, except allocates when in MODE_LOAD, thus requiring extra level of '&'.
-static bool ff_array_alloc(FILE *file, FF_MODE mode, void **var, size_t n_bytes){
+static bool ff_array_alloc(FILE *file, FF_MODE mode, void **array_ptr, size_t n_bytes){
     if (mode == FF_MODE_LOAD){
-        *var = FF_MALLOC(n_bytes);
-        if (*var == NULL){
+        *array_ptr = FF_MALLOC(n_bytes);
+        if (*array_ptr == NULL){
             return false;
         }
     }
-    return ff_var_content(file, mode, *var, n_bytes);
+    return ff_var_content(file, mode, *array_ptr, n_bytes);
 }
 
 #endif // FFORMAT_IMPL
