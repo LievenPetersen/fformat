@@ -66,6 +66,21 @@ static bool ff_var_content(FILE *file, FF_MODE mode, void *var, size_t n_bytes);
 // unlock definitons
 #ifdef FFORMAT_IMPL
 
+// override malloc and free
+#ifdef FF_MALLOC
+#   ifndef FF_FREE
+#   error "FF_MALLOC was defined by user, but FF_FREE is not!"
+#   endif // FF_FREE
+#else
+#   ifdef FF_FREE
+#   error "FF_FREE was defined by user, but FF_MALLOC is not!"
+#   endif // FF_FREE
+    // provide standard malloc and free
+#   include <stdlib.h>
+#   define FF_MALLOC malloc
+#   define FF_FREE free
+#endif // FF_MALLOC
+
 // open a file in the indicated mode (needs to be closed manually)
 static FILE *ff_open(char *path, FF_MODE mode){
     switch(mode){
