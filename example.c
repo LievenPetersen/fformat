@@ -30,11 +30,11 @@ bool friendly_file_io(FF_MODE mode, int32_t *number, char *path){
 
 int main(){
     int32_t incoming_data = 12345678;
-    bool save_success = friendly_file_io(MODE_SAVE, &incoming_data, "test.friendly");
+    bool save_success = friendly_file_io(FF_MODE_SAVE, &incoming_data, "test.friendly");
     assert(save_success);
 
     int32_t loaded_data = 0;
-    bool load_success = friendly_file_io(MODE_LOAD, &loaded_data, "test.friendly");
+    bool load_success = friendly_file_io(FF_MODE_LOAD, &loaded_data, "test.friendly");
     assert(load_success);
 
     // check if both structs have the same content

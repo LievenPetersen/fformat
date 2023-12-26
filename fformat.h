@@ -49,8 +49,8 @@
 #include <string.h>
 
 typedef enum{
-    MODE_LOAD,
-    MODE_SAVE,
+    FF_MODE_LOAD,
+    FF_MODE_SAVE,
 }FF_MODE;
 
 // open a file in the indicated mode (needs to be closed manually)
@@ -69,8 +69,8 @@ static bool ff_var_content(FILE *file, FF_MODE mode, void *var, size_t n_bytes);
 // open a file in the indicated mode (needs to be closed manually)
 static FILE *ff_open(char *path, FF_MODE mode){
     switch(mode){
-        case MODE_LOAD: return fopen(path, "rb");
-        case MODE_SAVE: return fopen(path, "wb");
+        case FF_MODE_LOAD: return fopen(path, "rb");
+        case FF_MODE_SAVE: return fopen(path, "wb");
     }
     return NULL;
 }
@@ -80,12 +80,12 @@ static FILE *ff_open(char *path, FF_MODE mode){
 static bool ff_str_literal(FILE *file, FF_MODE mode, char *str){
     size_t str_len = strlen(str);
     switch (mode) {
-        case MODE_LOAD: {
+        case FF_MODE_LOAD: {
             char buf[str_len];
             return fread(buf, 1, str_len, file) == str_len 
                 && strncmp(str, buf, str_len) == 0;
         }break;
-        case MODE_SAVE: {
+        case FF_MODE_SAVE: {
             return fwrite(str, 1, str_len, file) == str_len;
         }break;
     }
@@ -95,10 +95,10 @@ static bool ff_str_literal(FILE *file, FF_MODE mode, char *str){
 // pointer to a memory location of n_bytes size. Data is written/read as raw bytes.
 static bool ff_var_content(FILE *file, FF_MODE mode, void *var, size_t n_bytes){
     switch (mode) {
-        case MODE_LOAD: {
+        case FF_MODE_LOAD: {
             return fread(var, 1, n_bytes, file) == n_bytes;
         }break;
-        case MODE_SAVE: {
+        case FF_MODE_SAVE: {
             return fwrite(var, 1, n_bytes, file) == n_bytes;
         }break;
     }
