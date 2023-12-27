@@ -62,12 +62,20 @@ typedef enum{
 static FILE *ff_open(char *path, FF_MODE mode);
 // define the next section to contain the given string. str needs to be NULL terminated.
 // NULL terminator will not be written to file.
-static bool ff_str_literal(FILE *file, FF_MODE mode, char *str);
-// pointer to a memory location of n_bytes size. Data is written/read as raw bytes.
-static bool ff_var_content(FILE *file, FF_MODE mode, void *var, size_t n_bytes);
+static bool ff_lit_string(FILE *file, FF_MODE mode, char *str);
 
-// similar to ff_var_content, except allocates when in MODE_LOAD, thus requiring extra level of '&'.
-static bool ff_array_alloc(FILE *file, FF_MODE mode, void **var, size_t n_bytes);
+// pointer to a memory location of n_bytes size. Data is written/read as raw bytes.
+static bool ff_var_bytes(FILE *file, FF_MODE mode, void *var, size_t n_bytes);
+// similar to ff_var_bytes, except allocates when in MODE_LOAD, thus requiring extra level of '&'.
+static bool ff_var_bytes_alloc(FILE *file, FF_MODE mode, void **var_ptr, size_t n_bytes);
+
+// >string< meaning that var expects and yields a NULL terminated string.
+// Requires var to point to str_len+1 allocated bytes.
+// If the string is not NULL terminated use bytes instead.
+static bool ff_var_string(FILE *file, FF_MODE mode, char *var, size_t str_len);
+// like ff_var_string but allocates str_len+1 bytes.
+static bool ff_var_string_alloc(FILE *file, FF_MODE mode, char **var_ptr, size_t str_len);
+
 
 #endif // __FFORMAT_H
 
@@ -100,7 +108,7 @@ static FILE *ff_open(char *path, FF_MODE mode){
 
 // define the next section to contain the given string. str needs to be NULL terminated.
 // NULL terminator will not be written to file.
-static bool ff_str_literal(FILE *file, FF_MODE mode, char *str){
+static bool ff_lit_string(FILE *file, FF_MODE mode, char *str){
     size_t str_len = strlen(str);
     switch (mode) {
         case FF_MODE_LOAD: {
@@ -116,7 +124,7 @@ static bool ff_str_literal(FILE *file, FF_MODE mode, char *str){
 }
 
 // pointer to a memory location of n_bytes size. Data is written/read as raw bytes.
-static bool ff_var_content(FILE *file, FF_MODE mode, void *var, size_t n_bytes){
+static bool ff_var_bytes(FILE *file, FF_MODE mode, void *var, size_t n_bytes){
     switch (mode) {
         case FF_MODE_LOAD: {
             return fread(var, 1, n_bytes, file) == n_bytes;
@@ -128,15 +136,34 @@ static bool ff_var_content(FILE *file, FF_MODE mode, void *var, size_t n_bytes){
     return false;
 }
 
-// similar to ff_var_content, except allocates when in MODE_LOAD, thus requiring extra level of '&'.
-static bool ff_array_alloc(FILE *file, FF_MODE mode, void **array_ptr, size_t n_bytes){
+// similar to ff_var_bytes, except allocates when in MODE_LOAD, thus requiring extra level of '&'.
+static bool ff_var_bytes_alloc(FILE *file, FF_MODE mode, void **array_ptr, size_t n_bytes){
     if (mode == FF_MODE_LOAD){
         *array_ptr = FF_MALLOC(n_bytes);
         if (*array_ptr == NULL){
             return false;
         }
     }
-    return ff_var_content(file, mode, *array_ptr, n_bytes);
+    return ff_var_bytes(file, mode, *array_ptr, n_bytes);
+}
+
+// >string< meaning that var expects and yields a NULL terminated string.
+// Requires var to point to str_len+1 allocated bytes.
+// If the string is not NULL terminated use bytes instead.
+static bool ff_var_string(FILE *file, FF_MODE mode, char *var, size_t str_len){
+    if (mode == FF_MODE_LOAD) var[str_len] = 0; // NULL terminated
+    return ff_var_bytes(file, mode, var, str_len);
+}
+
+// like ff_var_string but allocates str_len+1 bytes.
+static bool ff_var_string_alloc(FILE *file, FF_MODE mode, char **var_ptr, size_t str_len){
+    if (mode == FF_MODE_LOAD){
+        *var_ptr = (char*)FF_MALLOC(str_len+1);
+        if (*var_ptr == NULL){
+            return false;
+        }
+    }
+    return ff_var_string(file, mode, *var_ptr, str_len);
 }
 
 #endif // FFORMAT_IMPL
