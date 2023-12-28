@@ -43,7 +43,7 @@ bool map_io(char *path, FF_MODE mode, map_t *map){
     && ff_lit_string(file, mode, "\nHeight: ")
     && ff_var_bytes(file, mode, &map->height, sizeof(map->height))
     && ff_lit_string(file, mode, "\nData:\n")
-    && ff_var_bytes_alloc(file, mode, (void**)&map->data, map->height * map->width * sizeof(*map->data))
+    && ff_var_bytes_alloc(file, mode, (void**)&map->data, map->height * map->width * sizeof(*map->data)) // sizeof does not evaluate the expression
     && ff_lit_string(file, mode, "\n")
     ;
     // TODO support formatting and parsing? scanf is unsafe? maybe own scanf + parsing?
