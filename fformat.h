@@ -76,10 +76,15 @@ static bool ff_var_string(FILE *file, FF_MODE mode, char *var, size_t str_len);
 // like ff_var_string but allocates str_len+1 bytes.
 static bool ff_var_string_alloc(FILE *file, FF_MODE mode, char **var_ptr, size_t str_len);
 
+// a string that ends with given terminator. Will end early if string contains terminator.
+static bool ff_var_string_until(FILE *file, FF_MODE mode, char *var, char terminator);
+// like ff_var_string_until but allocates str_len+1 bytes.
+// a string that ends with given terminator. Will end early if string contains terminator.
+static bool ff_var_string_until_alloc(FILE *file, FF_MODE mode, char **var_ptr, char terminator);
 
 #endif // __FFORMAT_H
 
-// unlock definitons
+// include definitons
 #ifdef FFORMAT_IMPL
 
 // override malloc and free
@@ -147,7 +152,7 @@ static bool ff_var_bytes_alloc(FILE *file, FF_MODE mode, void **array_ptr, size_
     return ff_var_bytes(file, mode, *array_ptr, n_bytes);
 }
 
-// >string< meaning that var expects and yields a NULL terminated string.
+// >string< meaning that var expects and yields a NULL terminated string (not terminated in file).
 // Requires var to point to str_len+1 allocated bytes.
 // If the string is not NULL terminated use bytes instead.
 static bool ff_var_string(FILE *file, FF_MODE mode, char *var, size_t str_len){
@@ -164,6 +169,58 @@ static bool ff_var_string_alloc(FILE *file, FF_MODE mode, char **var_ptr, size_t
         }
     }
     return ff_var_string(file, mode, *var_ptr, str_len);
+}
+
+// only in FF_MODE_LOAD
+static size_t __ff_num_bytes_until(FILE *file, char terminator){
+    size_t start_pos = ftell(file);
+    size_t end_pos = start_pos;
+    char c = 0;
+    // security risk, for streams that don't end and don't yield EOF
+    while ((c = fgetc(file)) != EOF){
+        if (c == terminator){
+            break;
+        }
+    }
+    end_pos = ftell(file);
+    // reset position in file to where it was at the call of this function
+    fseek(file, start_pos, SEEK_SET);
+    return end_pos - start_pos - 1; // -1 to stop before the terminator/EOF
+}
+
+// a string that ends with given terminator. Will end early if string contains terminator.
+// Returns false if the terminator was not found before EOF.
+static bool ff_var_string_until(FILE *file, FF_MODE mode, char *var, char terminator){
+    size_t str_len = 0;
+    switch (mode) {
+        case FF_MODE_LOAD:{
+            str_len = __ff_num_bytes_until(file, terminator);
+            fread(var, 1, str_len, file);
+            var[str_len] = 0; // NULL terminated
+            return fgetc(file) == terminator;
+        }break;
+        case FF_MODE_SAVE:{
+            str_len = strlen(var);
+            fwrite(var, 1, str_len, file);
+            fputc(terminator, file);
+            return true;
+        }break;
+    }
+    return false;
+}
+
+// like ff_var_string_until but allocates str_len+1 bytes.
+// a string that ends with given terminator. Will end early if string contains terminator.
+static bool ff_var_string_until_alloc(FILE *file, FF_MODE mode, char **var_ptr, char terminator){
+    if (mode == FF_MODE_LOAD){
+        // TODO: pass this to ff_var_string_until somehow
+        size_t str_len = __ff_num_bytes_until(file, terminator);
+        *var_ptr = (char*)FF_MALLOC(str_len+1);
+        if (*var_ptr == NULL){
+            return false;
+        }
+    }
+    return ff_var_string_until(file, mode, *var_ptr, terminator);
 }
 
 #endif // FFORMAT_IMPL
