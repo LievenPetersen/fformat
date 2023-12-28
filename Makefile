@@ -1,16 +1,19 @@
 
-warn-flags=-Werror -Wall -Wextra -pedantic -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-include-dirs -Wredundant-decls -Wshadow -Wstrict-overflow=4 -Wundef -Wno-unused -Wno-variadic-macros -Wno-parentheses -fdiagnostics-show-option
-flags = -Werror -Wall -pedantic -ggdb
-srcs = $(wildcard *.c)
-output = testrun
+WARN_FLAGS= -Werror -Wall -Wextra -pedantic -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-include-dirs -Wredundant-decls -Wshadow -Wstrict-overflow=4 -Wundef -Wno-unused -Wno-variadic-macros -Wno-parentheses -fdiagnostics-show-option
+FLAGS = -ggdb
 
-all: test
+DEPS = fformat.h
+SRCS = $(wildcard *.c)
+PROGS = $(patsubst %.c, %, $(SRCS))
 
-test: build
-	./$(output)
+all: build Makefile
 
-build: $(srcs)
-	gcc --std=c99 -o $(output) $(srcs) $(flags) $(warn-flags)
+build: $(PROGS) Makefile
+
+%: %.c Makefile $(DEPS)
+	gcc -o $@ $< $(FLAGS) $(WARN_FLAGS)
+	@echo "built $@"
 
 clean:
-	rm $(output)
+	rm $(PROGS)
+	rm test.friendly beautiful.map

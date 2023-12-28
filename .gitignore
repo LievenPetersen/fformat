@@ -1,3 +1,9 @@
 .vscode
-testrun
+
+# executables
+example
+variable_example
+
+# files written by examples
 test.friendly
+beautiful.map
