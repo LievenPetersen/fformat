@@ -202,7 +202,7 @@ static bool ff_var_string_until(FILE *file, FF_MODE mode, char *var, char termin
                 && fgetc(file) == terminator;
         }break;
         case FF_MODE_SAVE:{
-            if (index(var, terminator)) return false; // string contains terminator
+            if (strchr(var, terminator)) return false; // string contains terminator
             str_len = strlen(var);
             return fwrite(var, 1, str_len, file) == str_len
                 && fputc(terminator, file) == terminator;
