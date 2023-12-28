@@ -11,9 +11,9 @@ all: build Makefile
 build: $(PROGS) Makefile
 
 %: %.c Makefile $(DEPS)
-	gcc --std=c99 -o $@ $< $(FLAGS) $(WARN_FLAGS)
-	@echo "built $@"
+	@gcc --std=c99 -o $@ $< $(FLAGS) $(WARN_FLAGS)
+	@echo "built '$@'"
 
 clean:
-	rm $(PROGS)
-	rm test.friendly beautiful.map
+	rm -f $(PROGS)
+	rm -f test.friendly beautiful.map

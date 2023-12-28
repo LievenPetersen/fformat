@@ -26,6 +26,7 @@ bool friendly_file_io(FF_MODE mode, int32_t *number, char *path){
     return success;
 }
 ```
+use `make` to build the example programs.
 
 # Features
 - declarative file format through function statements.
