@@ -188,29 +188,28 @@ static size_t __ff_num_bytes_until(FILE *file, char terminator){
     return end_pos - start_pos - 1; // -1 to stop before the terminator/EOF
 }
 
-// a string that ends with given terminator. Will end early if string contains terminator.
-// Returns false if the terminator was not found before EOF.
+// a string that ends with given terminator.
+// Fails if the string contains the terminator.
 static bool ff_var_string_until(FILE *file, FF_MODE mode, char *var, char terminator){
     size_t str_len = 0;
     switch (mode) {
         case FF_MODE_LOAD:{
             str_len = __ff_num_bytes_until(file, terminator);
-            fread(var, 1, str_len, file);
             var[str_len] = 0; // NULL terminated
-            return fgetc(file) == terminator;
+            return fread(var, 1, str_len, file) == str_len
+                && fgetc(file) == terminator;
         }break;
         case FF_MODE_SAVE:{
+            if (index(var, terminator)) return false; // string contains terminator
             str_len = strlen(var);
-            fwrite(var, 1, str_len, file);
-            fputc(terminator, file);
-            return true;
+            return fwrite(var, 1, str_len, file) == str_len
+                && fputc(terminator, file) == terminator;
         }break;
     }
     return false;
 }
 
 // like ff_var_string_until but allocates str_len+1 bytes.
-// a string that ends with given terminator. Will end early if string contains terminator.
 static bool ff_var_string_until_alloc(FILE *file, FF_MODE mode, char **var_ptr, char terminator){
     if (mode == FF_MODE_LOAD){
         // TODO: pass this to ff_var_string_until somehow
