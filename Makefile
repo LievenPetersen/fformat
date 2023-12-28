@@ -11,7 +11,7 @@ all: build Makefile
 build: $(PROGS) Makefile
 
 %: %.c Makefile $(DEPS)
-	gcc -o $@ $< $(FLAGS) $(WARN_FLAGS)
+	gcc --std=c99 -o $@ $< $(FLAGS) $(WARN_FLAGS)
 	@echo "built $@"
 
 clean:
