@@ -1,7 +1,9 @@
 # Description
-The main idea behind fformat is to combine the code for loading and saving of a file format into one function, that can also serve as the definition of the format.
+*Header-only library conforming to C99.*
 
-To achieve this, all provided functions receive a mode (load or save) that changes their behaviour between reading and writing files.
+The main idea behind `fformat` is to combine the code for loading and saving of a file format into one function, which also serves as the definition of the format.
+
+To achieve this, all provided functions receive a mode (load or save) that changes their behaviour from reading to writing files.
 
 # Example
 ```c
