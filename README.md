@@ -28,7 +28,7 @@ bool friendly_file_io(FF_MODE mode, int32_t *number, char *path){
     return success;
 }
 ```
-use `make` to build the example programs.
+use `make` to build the example programs (or compile them yourself, they are only 1 c-file each, no dependencies).
 
 # Features
 - declarative file format through function statements.
