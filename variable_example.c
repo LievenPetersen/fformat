@@ -23,26 +23,22 @@ typedef struct{
     int32_t *data;
 }map_t;
 
-// TODO custom allocator and free?
 bool map_io(char *path, FF_MODE mode, map_t *map){
     FILE *file = ff_open(path, mode);
 
     // variable to store the strlen in front of the string
     size_t name_len = mode == FF_MODE_SAVE ? strlen(map->name) : 0;
 
+    // it's important to keep the success && .. chain going, to ensure an abort on first error.
     bool success = true
-    && ff_lit_string(file, mode, "Map v1.3\n")
+    && ff_lit_string(file, mode, "Map v1.3\n") // version (this could be an entry point to handle different format version)
     && ff_lit_string(file, mode, "Name (prefix len): ")
     && ff_var_bytes(file, mode, &name_len, sizeof(name_len))
-    ;
-    // TODO support quoted string?
-
-    success// it's important to keep the success && .. chain going, to ensure an abort on first error.
     && ff_var_string_alloc(file, mode, &map->name, name_len)
     && ff_lit_string(file, mode, "\nDescription (LF terminated): ")
     && ff_var_string_until_alloc(file, mode, &map->desc, '\n')
+
     && ff_lit_string(file, mode, "Width: ")
-    // TODO support formatting and parsing? scanf is unsafe? maybe own scanf + parsing?
     && ff_var_bytes(file, mode, &map->width, sizeof(map->width))
     && ff_lit_string(file, mode, "\nHeight: ")
     && ff_var_bytes(file, mode, &map->height, sizeof(map->height))
@@ -50,6 +46,8 @@ bool map_io(char *path, FF_MODE mode, map_t *map){
     && ff_var_bytes_alloc(file, mode, (void**)&map->data, map->height * map->width * sizeof(*map->data))
     && ff_lit_string(file, mode, "\n")
     ;
+    // TODO support formatting and parsing? scanf is unsafe? maybe own scanf + parsing?
+    // TODO support quoted string?
 
     fclose(file);
     return success;
