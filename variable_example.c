@@ -4,6 +4,13 @@
 #include <string.h>
 #include "stdint.h"
 
+/*
+ * This Example demonstrates IO with fields of variable size.
+ * Options are:
+ * - to write the size of arrays into the file elsewhere
+ * - or in case of strings to use an in-file terminator. Although this option is somewhat slower.
+ */
+
 #define FFORMAT_IMPL
 #include "fformat.h"
 

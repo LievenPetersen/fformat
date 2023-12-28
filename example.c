@@ -3,6 +3,11 @@
 #include <stdio.h>
 #include <stdint.h>
 
+/*
+ * This example is the simplest (and fastest) application of fformat.
+ * It simply shows how to assert string literals and how to deal with data who's size is always the same.
+ */
+
 #define FFORMAT_IMPL
 #include "fformat.h"
 
