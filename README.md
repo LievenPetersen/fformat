@@ -40,11 +40,12 @@ use `make` to build the example programs.
     - string R/W (NULL-terminated bytes)
     - in-file terminated strings
 
-# Anti-Features
+## Anti-Features
 - pattern matching
 - schemas
 
 # User Guide
+See the description in `fformat.h` for more details.
 
 ## Function names
 - The function names are a composition of different keywords:
