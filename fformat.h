@@ -66,11 +66,12 @@ static bool ff_lit_string(FILE *file, FF_MODE mode, char *str);
 
 // pointer to a memory location of n_bytes size. Data is written/read as raw bytes.
 static bool ff_var_bytes(FILE *file, FF_MODE mode, void *var, size_t n_bytes);
-// similar to ff_var_bytes, except allocates when in MODE_LOAD, thus requiring extra level of '&'.
+// similar to ff_var_bytes, except allocates n_bytes when in MODE_LOAD, thus requiring extra level of '&'.
 static bool ff_var_bytes_alloc(FILE *file, FF_MODE mode, void **var_ptr, size_t n_bytes);
 
 // >string< meaning that var expects and yields a NULL terminated string.
 // Requires var to point to str_len+1 allocated bytes.
+// str_len is still required, because the in-file representation does not have any termination.
 // If the string is not NULL terminated use bytes instead.
 static bool ff_var_string(FILE *file, FF_MODE mode, char *var, size_t str_len);
 // like ff_var_string but allocates str_len+1 bytes.
@@ -141,7 +142,7 @@ static bool ff_var_bytes(FILE *file, FF_MODE mode, void *var, size_t n_bytes){
     return false;
 }
 
-// similar to ff_var_bytes, except allocates when in MODE_LOAD, thus requiring extra level of '&'.
+// similar to ff_var_bytes, except allocates n_bytes when in MODE_LOAD, thus requiring extra level of '&'.
 static bool ff_var_bytes_alloc(FILE *file, FF_MODE mode, void **array_ptr, size_t n_bytes){
     if (mode == FF_MODE_LOAD){
         *array_ptr = FF_MALLOC(n_bytes);
@@ -152,8 +153,9 @@ static bool ff_var_bytes_alloc(FILE *file, FF_MODE mode, void **array_ptr, size_
     return ff_var_bytes(file, mode, *array_ptr, n_bytes);
 }
 
-// >string< meaning that var expects and yields a NULL terminated string (not terminated in file).
+// >string< meaning that var expects and yields a NULL terminated string.
 // Requires var to point to str_len+1 allocated bytes.
+// str_len is still required, because the in-file representation does not have any termination.
 // If the string is not NULL terminated use bytes instead.
 static bool ff_var_string(FILE *file, FF_MODE mode, char *var, size_t str_len){
     if (mode == FF_MODE_LOAD) var[str_len] = 0; // NULL terminated
