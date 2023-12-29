@@ -13,6 +13,7 @@ To achieve this, all provided functions receive a mode (load or save) that switc
 bool friendly_file_io(FF_MODE mode, int32_t *number, char *path){
 
     FILE *file = ff_with_file(path, mode);
+    if (!file) return false;
 
     // Definition of file format. (This code formatting supports easy copy pasting of lines)
     bool success = true
