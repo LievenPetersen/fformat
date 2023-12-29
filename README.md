@@ -3,7 +3,7 @@
 
 The main idea behind `fformat` is to combine the code for loading and saving of a file format into one function, which also serves as the definition of the format.
 
-To achieve this, all provided functions receive a mode (load or save) that changes their behaviour from reading to writing files.
+To achieve this, all provided functions receive a mode (load or save) that switches their behaviour between reading and writing files.
 
 # Example
 ```c
