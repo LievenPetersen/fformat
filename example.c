@@ -18,6 +18,7 @@
 bool friendly_file_io(FF_MODE mode, int32_t *number, char *path){
 
     FILE *file = ff_open(path, mode);
+    if (!file) return false;
 
     // Definiton of file format. (This layout supports easy copy pasting of lines)
     bool success = true

@@ -25,6 +25,7 @@ typedef struct{
 
 bool map_io(char *path, FF_MODE mode, map_t *map){
     FILE *file = ff_open(path, mode);
+    if (!file) return false;
 
     // variable to store the strlen in front of the string
     size_t name_len = mode == FF_MODE_SAVE ? strlen(map->name) : 0;
